@@ -1,12 +1,14 @@
 package com.example.myapplication
 
 import android.os.Bundle
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var textField: TextView
+    private lateinit var searchButton: Button
     private lateinit var bluetooth: Bluetooth
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,10 +16,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         bluetooth = Bluetooth(this)
-        textField = findViewById(R.id.test)
+        textField = findViewById(R.id.debug)
+        searchButton = findViewById(R.id.searchButton)
 
-        for (device in bluetooth.findDevices()) {
-            show(device.name)
+        searchButton.setOnClickListener {
+            Thread {
+                for (device in bluetooth.findDevices()) {
+                    show(device.name)
+                }
+            }.start()
         }
     }
 
@@ -27,7 +34,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun show(text: String) {
-        textField.append("$text\n")
+        textField.post {
+            textField.append("$text\n")
+        }
     }
 
     fun waitUntil(condition: () -> Boolean) {

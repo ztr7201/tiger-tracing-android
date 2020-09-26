@@ -54,13 +54,12 @@ class Bluetooth(private val activity: MainActivity) {
     }
 
     fun findDevices(): List<BluetoothDevice> {
+        activity.show("searching for devices")
         devices.clear()
         adapter.startDiscovery()
         discoveryState = DiscoveryState.WAITING_FOR_START
-        activity.waitUntil {
-            discoveryState == DiscoveryState.STOPPED.also {
-                println(discoveryState)
-            }
+        while (discoveryState != DiscoveryState.STOPPED) {
+            println(discoveryState)
         }
         return devices
     }
